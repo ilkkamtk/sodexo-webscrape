@@ -1,8 +1,14 @@
 import app from './app';
+import mongoConnect from './utlis/db';
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  /* eslint-disable no-console */
-  console.log(`Listening: http://localhost:${port}`);
-  /* eslint-enable no-console */
-});
+const port = process.env.PORT || 8080;
+(async () => {
+  try {
+    await mongoConnect();
+    app.listen(port, () => {
+      console.log(`Listening: http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.log('Server error', (error as Error).message);
+  }
+})();
