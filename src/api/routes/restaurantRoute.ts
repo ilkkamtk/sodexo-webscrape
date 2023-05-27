@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  deleteRestaurant,
   getDailyMenu,
   getRestaurant,
   getRestaurants,
@@ -11,10 +12,10 @@ const router = express.Router();
 
 router.route('/').get(getRestaurants);
 
-router.route('/favourites').get(authenticate, getRestaurant);
-
 router.route('/daily/:id/:lang').get(getDailyMenu);
 
 router.route('/weekly/:id/:lang').get(getWeeklyMenu);
+
+router.route('/:id').get(getRestaurant).delete(authenticate, deleteRestaurant);
 
 export default router;

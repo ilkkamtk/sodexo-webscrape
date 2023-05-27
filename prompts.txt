@@ -1,0 +1,136 @@
+// authRoute.ts
+import express from 'express';
+import { login } from '../controllers/authController';
+const router = express.Router();
+
+router.post('/login', login);
+
+export default router;
+
+//userRoute.ts
+import express from 'express';
+import { authenticate, validate } from '../../middlewares';
+import {
+  checkToken,
+  checkUserExists,
+  userDeleteCurrent,
+  userGet,
+  userListGet,
+  userPost,
+  userPutCurrent,
+} from '../controllers/userController';
+import { updateSchema, userSchema } from '../../validators';
+
+const router = express.Router();
+
+router
+  .route('/')
+  .get(userListGet)
+  .post(validate(userSchema), userPost)
+  .put(authenticate, validate(updateSchema), userPutCurrent)
+  .delete(authenticate, userDeleteCurrent);
+
+router.get('/token', authenticate, checkToken);
+
+router.route('/available/:username').get(checkUserExists);
+
+router.route('/:id').get(userGet);
+
+export default router;
+
+// restaurantRoute.ts
+import express from 'express';
+import {
+  deleteRestaurant,
+  getDailyMenu,
+  getRestaurant,
+  getRestaurants,
+  getWeeklyMenu,
+} from '../controllers/restaurantController';
+import { authenticate } from '../../middlewares';
+
+const router = express.Router();
+
+router.route('/').get(getRestaurants);
+
+router.route('/favourites').get(authenticate, getRestaurant);
+
+router.route('/daily/:id/:lang').get(getDailyMenu);
+
+router.route('/weekly/:id/:lang').get(getWeeklyMenu);
+
+router.route('/:id').delete(authenticate, deleteRestaurant);
+
+export default router;
+
+
+// interfaces
+// user.ts
+import { Document, Types } from 'mongoose';
+interface User extends Document {
+  username: string;
+  password: string;
+  favouriteRestaurant?: Types.ObjectId;
+  avatar?: string;
+  role: 'admin' | 'user';
+}
+
+type UpdateUser = Partial<User>;
+
+interface AuthUser {
+  username: string;
+  favouriteRestaurant?: Types.ObjectId;
+  _id: Types.ObjectId;
+  avatar?: string;
+  role: 'admin' | 'user';
+}
+
+interface UserResponse {
+  message: string;
+  data: {
+    username: string;
+    favouriteRestaurant?: Types.ObjectId;
+    _id: Types.ObjectId;
+    avatar?: string;
+    role: 'admin' | 'user';
+  };
+  token?: string;
+}
+
+export { User, UpdateUser, AuthUser, UserResponse };
+
+// restaurant.ts
+import { Point } from 'geojson';
+
+interface Restaurant {
+  companyId: number;
+  name: string;
+  address: string;
+  postalCode: string;
+  city: string;
+  phone: string;
+  location: Point;
+  company: 'Sodexo' | 'Compass Group';
+}
+
+interface Course {
+  name: string;
+  price: string;
+  diets: string;
+}
+
+interface DailyMenu {
+  courses: Course[];
+}
+
+interface Day {
+  date: string;
+  courses: Course[];
+}
+
+interface WeeklyMenu {
+  days: Day[];
+}
+
+export { Restaurant, DailyMenu, WeeklyMenu, Course };
+

@@ -4,6 +4,7 @@ interface User extends Document {
   password: string;
   favouriteRestaurant?: Types.ObjectId;
   avatar?: string;
+  role: 'admin' | 'user';
 }
 
 type UpdateUser = Partial<User>;
@@ -13,6 +14,7 @@ interface AuthUser {
   favouriteRestaurant?: Types.ObjectId;
   _id: Types.ObjectId;
   avatar?: string;
+  role: 'admin' | 'user';
 }
 
 interface UserResponse {
@@ -22,6 +24,7 @@ interface UserResponse {
     favouriteRestaurant?: Types.ObjectId;
     _id: Types.ObjectId;
     avatar?: string;
+    role: 'admin' | 'user';
   };
   token?: string;
 }

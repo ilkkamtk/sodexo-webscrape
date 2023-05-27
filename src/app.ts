@@ -12,9 +12,23 @@ require('dotenv').config();
 const app = express();
 
 app.use(morgan('dev'));
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-eval'"],
+    },
+  }),
+);
+
 app.use(cors());
 app.use(express.json());
+
+// serve public folder for apidoc
+app.use(express.static('public'));
+
+// serve uploads folder for images
+app.use('/uploads', express.static('uploads'));
 
 app.get<{}, MessageResponse>('/', (req, res) => {
   res.json({

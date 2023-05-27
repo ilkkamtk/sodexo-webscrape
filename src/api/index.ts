@@ -4,7 +4,7 @@ import userRoute from './routes/userRoute';
 import authRoute from './routes/authRoute';
 
 import MessageResponse from '../interfaces/MessageResponse';
-// import { populateRestaurants } from './controllers/populateController';
+import { populateRestaurants } from './controllers/populateController';
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.use('/restaurants', restaurantRoute);
 router.use('/users', userRoute);
 router.use('/auth', authRoute);
 
-// run once to populate database:
-// router.use('/populate', populateRestaurants);
+// populate database/later add new restaurants:
+router.use('/populate', populateRestaurants);
 
 export default router;

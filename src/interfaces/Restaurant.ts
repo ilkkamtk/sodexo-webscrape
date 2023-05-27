@@ -21,11 +21,13 @@ interface DailyMenu {
   courses: Course[];
 }
 
-interface WeeklyMenu {
-  day: {
-    date: string;
-    courses: Course[];
-  };
+interface Day {
+  date: string;
+  courses: Course[];
 }
 
-export { Restaurant, DailyMenu, WeeklyMenu };
+interface WeeklyMenu {
+  days: Day[];
+}
+
+export { Restaurant, DailyMenu, WeeklyMenu, Course };

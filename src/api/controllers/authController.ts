@@ -31,6 +31,7 @@ const login = async (
       username: user.username,
       favouriteRestaurant: user.favouriteRestaurant,
       _id: user._id as Types.ObjectId,
+      role: user.role,
     };
 
     const token = jwt.sign(authUser, process.env.JWT_SECRET as string);

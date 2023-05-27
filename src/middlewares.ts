@@ -39,7 +39,7 @@ const validate =
       });
       next();
     } catch (error) {
-      next(new CustomError((error as Error).message, 400));
+      return res.status(400).json(error);
     }
   };
 
@@ -81,6 +81,7 @@ const authenticate = async (
       _id: user._id,
       username: user.username,
       favouriteRestaurant: user.favouriteRestaurant,
+      role: user.role,
     };
 
     res.locals.user = authUser;

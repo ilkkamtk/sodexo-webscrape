@@ -1,0 +1,13 @@
+{
+  "name": "Student Restaurants API",
+  "version": "1.0.0",
+  "description": "For Metropolia Courses",
+  "title": "Student Restaurants API",
+  "url": "/api/v1",
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  },
+  "exclude": ["node_modules/", "public/"],
+  "files": ["src/apidoc/**/*.ts"]
+}

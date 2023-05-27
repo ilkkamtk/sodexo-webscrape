@@ -38,6 +38,7 @@ interface Meal {
   nutrients: Nutrients | null;
   structuredNutrients: StructuredNutrient[] | null;
   iconUrl: string;
+  price?: string;
 }
 
 interface Nutrients {
@@ -69,4 +70,4 @@ interface CompassWeeklyMenu {
   menus: CompassDailyMenu[];
 }
 
-export { CompassRestaurant, CompassDailyMenu, CompassWeeklyMenu };
+export { CompassRestaurant, CompassDailyMenu, CompassWeeklyMenu, Meal };

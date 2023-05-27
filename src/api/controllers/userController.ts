@@ -16,15 +16,6 @@ declare module 'express-serve-static-core' {
 
 const salt = bcrypt.genSaltSync(12);
 
-const userListGet = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const users = await userModel.find().select('-password');
-    res.json(users);
-  } catch (error) {
-    next(error);
-  }
-};
-
 const userGet = async (
   req: Request<{ id: string }, {}, {}>,
   res: Response,
@@ -35,7 +26,8 @@ const userGet = async (
     if (user) {
       res.json(user);
     } else {
-      throw new CustomError('User not found', 404);
+      next(new CustomError('User not found', 404));
+      return;
     }
   } catch (error) {
     next(new CustomError((error as Error).message, 400));
@@ -49,6 +41,7 @@ const userPost = async (
 ) => {
   try {
     const user = req.body;
+    user.role = 'user';
     user.password = bcrypt.hashSync(user.password, salt);
     console.log(user);
     const newUser = await userModel.create(user);
@@ -58,9 +51,30 @@ const userPost = async (
         username: newUser.username,
         favouriteRestaurant: newUser.favouriteRestaurant,
         _id: newUser._id,
+        role: newUser.role,
       },
     };
     res.json(response);
+  } catch (error) {
+    if ((error as Error).message.includes('11000')) {
+      next(new CustomError('Username already exists', 400));
+      return;
+    }
+    next(new CustomError((error as Error).message, 400));
+  }
+};
+
+const checkUserExists = async (
+  req: Request<{ username: string }, {}, {}>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (await userModel.findOne({ username: req.params.username })) {
+      res.json({ available: false });
+    } else {
+      res.json({ available: true });
+    }
   } catch (error) {
     next(new CustomError((error as Error).message, 400));
   }
@@ -123,11 +137,38 @@ const checkToken = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const avatarPost = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userFromToken = res.locals.user;
+    if (req.file) {
+      const avatarFile = req.file.filename;
+      const result = await userModel.findByIdAndUpdate(
+        userFromToken._id,
+        { avatar: avatarFile },
+        { new: true },
+      );
+      if (result) {
+        const response: UserResponse = {
+          message: 'avatar uploaded',
+          data: result,
+        };
+        res.json(response);
+      }
+    } else {
+      next(new CustomError('No file uploaded', 400));
+      return;
+    }
+  } catch (error) {
+    next(new CustomError((error as Error).message, 400));
+  }
+};
+
 export {
-  userListGet,
   userGet,
   userPost,
   userPutCurrent,
   userDeleteCurrent,
   checkToken,
+  checkUserExists,
+  avatarPost,
 };

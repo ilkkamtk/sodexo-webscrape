@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import {
+  getCompassCostCenterId,
   scrapeCompassRestaurants,
   scrapeSodexoRestaurants,
 } from '../../functions/scrapingFunctions';
@@ -14,34 +15,43 @@ const populateRestaurants = async (
 ) => {
   try {
     const restaurants = await scrapeSodexoRestaurants();
-    restaurants.forEach((restaurant) => {
-      const newRestaurant = new restaurantModel(restaurant);
-      newRestaurant.save();
-    });
+    for (const restaurant of restaurants) {
+      try {
+        const newRestaurant = new restaurantModel(restaurant);
+        await newRestaurant.save();
+      } catch (error) {
+        console.log('Restaurant already exists:', restaurant?.name);
+        continue;
+      }
+    }
 
     const compassRestaurants = await scrapeCompassRestaurants();
-    compassRestaurants.forEach((restaurant) => {
-      const newRestaurant: Restaurant = {
-        name: restaurant.title,
-        address: restaurant.streetAddress,
-        postalCode: restaurant.postalCode,
-        city: restaurant.city,
-        phone: '-',
-        location: {
-          type: 'Point',
-          coordinates: [
-            restaurant.coordinates.longitude,
-            restaurant.coordinates.latitude,
-          ],
-        },
-        company: 'Compass Group',
-        companyId: restaurant.contentId,
-      };
-      console.log(newRestaurant);
-      const newCompassRestaurant = new restaurantModel(newRestaurant);
-      newCompassRestaurant.save();
-    });
-
+    await Promise.all(
+      compassRestaurants.map(async (restaurant) => {
+        try {
+          const newRestaurant: Restaurant = {
+            name: restaurant.title,
+            address: restaurant.streetAddress,
+            postalCode: restaurant.postalCode,
+            city: restaurant.city,
+            phone: '-',
+            location: {
+              type: 'Point',
+              coordinates: [
+                restaurant.coordinates.longitude,
+                restaurant.coordinates.latitude,
+              ],
+            },
+            company: 'Compass Group',
+            companyId: await getCompassCostCenterId(restaurant.url),
+          };
+          const newCompassRestaurant = new restaurantModel(newRestaurant);
+          await newCompassRestaurant.save();
+        } catch (error) {
+          console.log('Restaurant already exists:', restaurant.title);
+        }
+      }),
+    );
     const dbResult = await restaurantModel.find();
     res.json(dbResult);
   } catch (error) {

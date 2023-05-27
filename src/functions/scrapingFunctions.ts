@@ -2,7 +2,11 @@ import jsdom from 'jsdom';
 import { Restaurant } from '../interfaces/Restaurant';
 import { Point } from 'geojson';
 import { SodexoDailyMenu, SodexoWeeklyMenu } from '../interfaces/Sodexo';
-import { CompassRestaurant } from '../interfaces/Compass';
+import {
+  CompassDailyMenu,
+  CompassRestaurant,
+  CompassWeeklyMenu,
+} from '../interfaces/Compass';
 
 const url = 'https://www.sodexo.fi/opiskelijaravintolat';
 const url2 = 'https://www.sodexo.fi';
@@ -29,7 +33,6 @@ const scrapeSodexoRestaurants = async () => {
   const restaurants = await Promise.all(
     linksArray.map(async (link) => {
       const href = link.getAttribute('href');
-      // console.log(href);
       const restaurantResponse = await fetch(url2 + href);
       const restaurantHtml = await restaurantResponse.text();
       const restaurantDom = new jsdom.JSDOM(restaurantHtml);
@@ -57,7 +60,6 @@ const scrapeSodexoRestaurants = async () => {
         `https://api.digitransit.fi/geocoding/v1/search?text=${address}, ${city}&size=1&digitransit-subscription-key=${process.env.DIGITRANSIT_SUBSCRIPTION_KEY}`,
       );
       const geocodingJson = await geocodingResponse.json();
-      // console.log(geocodingJson.features[0].geometry);
       const location = geocodingJson.features[0].geometry as Point;
 
       if (name && jsonLink && address && city && zip && phone) {
@@ -99,18 +101,43 @@ const scrapeSodexoWeeklyMenu = async (id: number, lang: string) => {
 
 const scrapeCompassRestaurants = async () => {
   const restaurants: CompassRestaurant[] = [];
-  for (let i = 1; i < 100; i++) {
+  let looping = true;
+  let page = 1;
+  while (looping) {
     const restaurantsResponse = await fetch(
-      `https://www.compass-group.fi/api/restaurant-search?q=&page=${i}&pageSize=5&language=fi&matchAllServiceIds=2921&date=${today()}`,
+      `https://www.compass-group.fi/api/restaurant-search?q=&page=${page}&pageSize=5&language=fi&matchAllServiceIds=2921&date=${today()}`,
     );
     const restaurantsJson = await restaurantsResponse.json();
     restaurants.push(...restaurantsJson.hits);
-    if (restaurantsJson.hasMore === false) {
-      break;
-    }
-    console.log('here');
+    page++;
+    looping = restaurantsJson.hasMore;
   }
   return restaurants;
+};
+
+const getCompassCostCenterId = async (contentUrl: string) => {
+  const costCenterResponse = await fetch(
+    `https://www.compass-group.fi/api/cda/content?contentUrl=${contentUrl}`,
+  );
+  const costCenterJson = await costCenterResponse.json();
+  const costCenterId = costCenterJson[0].costCenter;
+  return costCenterId;
+};
+
+const scrapeCompassDailyMenu = async (id: number, lang: string) => {
+  const menuResponse = await fetch(
+    `https://www.compass-group.fi/menuapi/day-menus?costCenter=${id}&date=${today()}&language=${lang}`,
+  );
+  const menuJson = (await menuResponse.json()) as CompassDailyMenu;
+  return menuJson;
+};
+
+const scrapeCompassWeeklyMenu = async (id: number, lang: string) => {
+  const menuResponse = await fetch(
+    `https://www.compass-group.fi/menuapi/week-menus?costCenter=${id}&date=${today()}&language=${lang}`,
+  );
+  const menuJson = (await menuResponse.json()) as CompassWeeklyMenu;
+  return menuJson;
 };
 
 export {
@@ -118,4 +145,7 @@ export {
   scrapeSodexoDailyMenu,
   scrapeSodexoWeeklyMenu,
   scrapeCompassRestaurants,
+  scrapeCompassDailyMenu,
+  scrapeCompassWeeklyMenu,
+  getCompassCostCenterId,
 };
