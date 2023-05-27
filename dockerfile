@@ -16,9 +16,6 @@ COPY . .
 # Build the Node.js project
 RUN npm run build
 
-# Generate API documentation
-RUN npm run apidoc
-
 EXPOSE 8080
 
 # Start the application (modify this according to your project's requirements)
