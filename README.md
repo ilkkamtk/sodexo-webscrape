@@ -4,3 +4,5 @@
 - Fill .env
 - `npm run dev`
 - `npm run apidoc` for apiDoc
+- when running the server 1st time, run /populate endpoint to add restaurants to database
+  - Later /populate will update database if there are new restaurants
