@@ -1,25 +1,32 @@
-# Use the official Node.js base image
-FROM node:18-alpine
+FROM node as builder
 
-# Set the working directory in the container
-WORKDIR /app
+# Create app directory
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the container
+# Install app dependencies
 COPY package*.json ./
 
-# Install project dependencies
-RUN npm install
+RUN npm ci
 
-# Copy the entire project to the container
 COPY . .
-
-# Build the Node.js project
+RUN npm run apidoc
 RUN npm run build
 
-# Generate API documentation
-RUN npm run apidoc
+FROM node:slim
+
+ENV NODE_ENV production
+USER node
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY package*.json ./
+
+RUN npm ci --production
+
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/public ./public
 
 EXPOSE 8080
-
-# Start the application (modify this according to your project's requirements)
-CMD [ "npm", "start" ]
+CMD [ "node", "dist/src/index.js" ]

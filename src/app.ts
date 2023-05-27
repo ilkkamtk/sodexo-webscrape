@@ -5,7 +5,6 @@ import cors from 'cors';
 
 import * as middlewares from './middlewares';
 import api from './api';
-import MessageResponse from './interfaces/MessageResponse';
 
 require('dotenv').config();
 
@@ -29,14 +28,6 @@ app.use(express.static('public'));
 
 // serve uploads folder for images
 app.use('/uploads', express.static('uploads'));
-
-app.get('/', (req: Request, res: Response) => {
-  const message: MessageResponse = {
-    message: 'Server is running!',
-  };
-
-  res.json(message);
-});
 
 app.use('/api/v1', api);
 
