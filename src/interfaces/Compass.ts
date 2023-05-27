@@ -9,17 +9,17 @@ interface CompassRestaurant {
   city: string;
   openingHoursToday: string;
   lunchHoursToday: string;
-  distanceKm: null;
+  distanceKm: number | null;
   callToActionPrimaryUrl: string;
-  callToActionPrimaryName: null;
+  callToActionPrimaryName: string | null;
   callToActionSecondaryUrl: string;
-  callToActionSecondaryName: null;
+  callToActionSecondaryName: string | null;
   squareTeaserImage: string;
   coordinates: Coordinates;
   title: string;
-  teaserText: null;
+  teaserText: string | null;
   url: string;
-  linkText: null;
+  linkText: string | null;
   image: string;
   contentId: number;
 }
