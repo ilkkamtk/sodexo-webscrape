@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -30,10 +30,12 @@ app.use(express.static('public'));
 // serve uploads folder for images
 app.use('/uploads', express.static('uploads'));
 
-app.get<{}, MessageResponse>('/', (req, res) => {
-  res.json({
+app.get('/', (req: Request, res: Response) => {
+  const message: MessageResponse = {
     message: 'Server is running!',
-  });
+  };
+
+  res.json(message);
 });
 
 app.use('/api/v1', api);
