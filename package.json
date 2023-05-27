@@ -1,8 +1,8 @@
 {
-  "name": "express-api-starter-ts",
-  "version": "1.2.0",
-  "description": " A basic starter for an express.js API with Typescript",
-  "main": "src/index.ts",
+  "name": "student-restaurants",
+  "version": "0.0.1",
+  "description": "API for student restaurants (Sodexo + Compass)",
+  "main": "dist/src/index.js",
   "scripts": {
     "start": "node dist/src/index.js",
     "dev": "nodemon src/index.ts",

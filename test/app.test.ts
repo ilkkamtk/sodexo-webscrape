@@ -13,13 +13,11 @@ describe('app', () => {
 });
 
 describe('GET /', () => {
-  it('responds with a json message', (done) => {
+  it('responds with apidoc', (done) => {
     request(app)
       .get('/')
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(200, {
-        message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
-      }, done);
+      .expect('Content-Type', /html/)
+      .expect(200, done);
   });
 });
