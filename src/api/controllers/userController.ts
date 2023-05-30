@@ -12,6 +12,7 @@ import userModel from '../models/userModel';
 import activationLinkModel from '../models/activationLinkModel';
 import Mail from '../../interfaces/Mail';
 import sendMail from '../../functions/sendMail';
+import MessageResponse from '../../interfaces/MessageResponse';
 declare module 'express-serve-static-core' {
   interface ParamsDictionary {
     id: string;
@@ -64,9 +65,9 @@ const userPost = async (
       from: 'noreply@studentrestaurants.fi',
       to: newUser.email,
       subject: 'Account activation',
-      text: `Click the link to activate your account: ${
+      html: `Click the link to activate your account: <a href="${
         user.UIUrl + activateObject.hash
-      }`,
+      }">Activate</a>`,
     };
     // send email
     const link = await sendMail(mail);
@@ -205,7 +206,10 @@ const activateUser = async (
       { new: true },
     );
     if (user) {
-      res.json({ message: 'user activated' });
+      const message: MessageResponse = {
+        message: 'User activated',
+      };
+      res.json(message);
     } else {
       next(new CustomError('User not found', 404));
       return;
