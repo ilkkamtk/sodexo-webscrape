@@ -6,8 +6,12 @@ import {
   AuthUser,
   UserResponse,
   UpdateUser,
+  ActivationLink,
 } from '../../interfaces/User';
 import userModel from '../models/userModel';
+import activationLinkModel from '../models/activationLinkModel';
+import Mail from '../../interfaces/Mail';
+import sendMail from '../../functions/sendMail';
 declare module 'express-serve-static-core' {
   interface ParamsDictionary {
     id: string;
@@ -49,11 +53,34 @@ const userPost = async (
       message: 'user created',
       data: {
         username: newUser.username,
+        email: newUser.email,
         favouriteRestaurant: newUser.favouriteRestaurant,
         _id: newUser._id,
         role: newUser.role,
+        activated: newUser.activated,
       },
     };
+    // create activation link
+    const activateObject: ActivationLink = {
+      hash: bcrypt.hashSync(newUser.username, salt),
+      createdAt: new Date(),
+    };
+    // save activation link
+    const result = await activationLinkModel.create(activateObject);
+    console.log(result);
+
+    // send email
+    const mail: Mail = {
+      from: 'noreply@studentrestaurants.fi',
+      to: newUser.email,
+      subject: 'Account activation',
+      text: `Click the link to activate your account: ${
+        user.UIUrl + activateObject.hash
+      }`,
+    };
+    // send email
+    await sendMail(mail);
+
     res.json(response);
   } catch (error) {
     if ((error as Error).message.includes('11000')) {
@@ -163,6 +190,28 @@ const avatarPost = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const activateUser = async (
+  req: Request<{ hash: string }, {}, {}>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const user = await userModel.findOneAndUpdate(
+      { username: bcrypt.hashSync(req.params.hash, salt) },
+      { activated: true },
+      { new: true },
+    );
+    if (user) {
+      res.json({ message: 'user activated' });
+    } else {
+      next(new CustomError('User not found', 404));
+      return;
+    }
+  } catch (error) {
+    next(new CustomError((error as Error).message, 400));
+  }
+};
+
 export {
   userGet,
   userPost,
@@ -171,4 +220,5 @@ export {
   checkToken,
   checkUserExists,
   avatarPost,
+  activateUser,
 };

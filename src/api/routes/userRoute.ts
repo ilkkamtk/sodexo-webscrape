@@ -1,6 +1,7 @@
 import express, { Request } from 'express';
 import { authenticate, validate } from '../../middlewares';
 import {
+  activateUser,
   avatarPost,
   checkToken,
   checkUserExists,
@@ -32,6 +33,8 @@ router
   .post(validate(userSchema), userPost)
   .put(authenticate, validate(updateSchema), userPutCurrent)
   .delete(authenticate, userDeleteCurrent);
+
+router.get('activate/:hash', activateUser);
 
 router.get('/token', authenticate, checkToken);
 

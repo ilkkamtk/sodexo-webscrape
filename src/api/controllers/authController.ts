@@ -29,9 +29,11 @@ const login = async (
 
     const authUser: AuthUser = {
       username: user.username,
+      email: user.email,
       favouriteRestaurant: user.favouriteRestaurant,
       _id: user._id as Types.ObjectId,
       role: user.role,
+      activated: user.activated,
     };
 
     const token = jwt.sign(authUser, process.env.JWT_SECRET as string);

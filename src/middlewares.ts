@@ -82,6 +82,8 @@ const authenticate = async (
       username: user.username,
       favouriteRestaurant: user.favouriteRestaurant,
       role: user.role,
+      email: user.email,
+      activated: user.activated,
     };
 
     res.locals.user = authUser;
