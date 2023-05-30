@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import CustomError from '../../classes/CustomError';
-import bcrypt from 'bcryptjs';
+import bcrypt, { hash } from 'bcryptjs';
 import {
   User,
   AuthUser,
@@ -55,6 +55,7 @@ const userPost = async (
     const activateObject: ActivationLink = {
       hash: bcrypt.hashSync(newUser.username, salt),
       createdAt: new Date(),
+      user: newUser._id,
     };
     // save activation link
     const result = await activationLinkModel.create(activateObject);
@@ -200,8 +201,15 @@ const activateUser = async (
   next: NextFunction,
 ) => {
   try {
+    const hash = req.params.hash;
+    const activateLink = await activationLinkModel.findOne({ hash: hash });
+    if (!activateLink) {
+      next(new CustomError('Activation link not found', 404));
+      return;
+    }
+
     const user = await userModel.findOneAndUpdate(
-      { username: bcrypt.hashSync(req.params.hash, salt) },
+      { username: activateLink.user },
       { activated: true },
       { new: true },
     );

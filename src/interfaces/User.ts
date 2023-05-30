@@ -40,6 +40,7 @@ interface UserResponse {
 interface ActivationLink {
   hash: string;
   createdAt: Date;
+  user: Types.ObjectId;
 }
 
 export { User, UpdateUser, AuthUser, UserResponse, ActivationLink };
