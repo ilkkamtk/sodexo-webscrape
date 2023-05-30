@@ -2,9 +2,11 @@ import nodemailer from 'nodemailer';
 import Mail from '../interfaces/Mail';
 
 export default async function sendMail(mail: Mail) {
-  // Generate test SMTP service account from ethereal.email
-  // Only needed if you don't have a real mail account for testing
-  let testAccount = await nodemailer.createTestAccount();
+  // test account from ethereal.email
+  let testAccount = {
+    user: 'luisa61@ethereal.email',
+    pass: 'wcErbXMP2vqaU7VEuz',
+  };
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
