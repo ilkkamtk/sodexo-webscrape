@@ -34,7 +34,7 @@ router
   .put(authenticate, validate(updateSchema), userPutCurrent)
   .delete(authenticate, userDeleteCurrent);
 
-router.get('activate/:hash', activateUser);
+router.get('/activate/:hash', activateUser);
 
 router.get('/token', authenticate, checkToken);
 
