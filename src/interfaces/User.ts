@@ -34,6 +34,7 @@ interface UserResponse {
     activated: boolean;
   };
   token?: string;
+  activationUrl?: string | false;
 }
 
 interface ActivationLink {

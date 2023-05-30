@@ -49,17 +49,7 @@ const userPost = async (
     user.password = bcrypt.hashSync(user.password, salt);
     console.log(user);
     const newUser = await userModel.create(user);
-    const response: UserResponse = {
-      message: 'user created',
-      data: {
-        username: newUser.username,
-        email: newUser.email,
-        favouriteRestaurant: newUser.favouriteRestaurant,
-        _id: newUser._id,
-        role: newUser.role,
-        activated: newUser.activated,
-      },
-    };
+
     // create activation link
     const activateObject: ActivationLink = {
       hash: bcrypt.hashSync(newUser.username, salt),
@@ -79,7 +69,20 @@ const userPost = async (
       }`,
     };
     // send email
-    await sendMail(mail);
+    const link = await sendMail(mail);
+
+    const response: UserResponse = {
+      message: 'user created',
+      data: {
+        username: newUser.username,
+        email: newUser.email,
+        favouriteRestaurant: newUser.favouriteRestaurant,
+        _id: newUser._id,
+        role: newUser.role,
+        activated: newUser.activated,
+      },
+      activationUrl: link,
+    };
 
     res.json(response);
   } catch (error) {

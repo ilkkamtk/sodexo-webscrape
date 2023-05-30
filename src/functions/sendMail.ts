@@ -21,6 +21,5 @@ export default async function sendMail(mail: Mail) {
 
   const info = await transporter.sendMail(mail);
 
-  console.log(info);
-  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  return nodemailer.getTestMessageUrl(info);
 }
