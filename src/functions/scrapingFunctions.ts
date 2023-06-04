@@ -7,16 +7,10 @@ import {
   CompassRestaurant,
   CompassWeeklyMenu,
 } from '../interfaces/Compass';
+import today from './today';
 
 const url = 'https://www.sodexo.fi/opiskelijaravintolat';
 const url2 = 'https://www.sodexo.fi';
-
-const today = () => {
-  let date = new Date();
-  const offset = date.getTimezoneOffset();
-  date = new Date(date.getTime() - offset * 60 * 1000);
-  return date.toISOString().split('T')[0];
-};
 
 const scrapeSodexoRestaurants = async () => {
   const restaurantsResponse = await fetch(url);
