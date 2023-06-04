@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import CustomError from '../../classes/CustomError';
-import bcrypt, { hash } from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import {
   User,
   AuthUser,

@@ -27,6 +27,11 @@ const login = async (
       return;
     }
 
+    if (!user.activated) {
+      next(new CustomError('User not activated', 200));
+      return;
+    }
+
     const authUser: AuthUser = {
       username: user.username,
       email: user.email,
