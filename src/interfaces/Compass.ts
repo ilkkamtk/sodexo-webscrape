@@ -60,7 +60,6 @@ interface StructuredNutrient {
 }
 
 interface CompassDailyMenu {
-  dayOfWeek: string;
   date: string;
   menuPackages: MenuPackage[];
 }

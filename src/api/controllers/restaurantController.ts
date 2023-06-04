@@ -11,6 +11,7 @@ import { AuthUser } from '../../interfaces/User';
 import restaurantModel from '../models/restaurantModel';
 import MessageResponse from '../../interfaces/MessageResponse';
 import { Meal } from '../../interfaces/Compass';
+import getDateFromDayName from '../../functions/getDateFromDayName';
 
 const getRestaurants = async (
   req: Request,
@@ -46,7 +47,6 @@ const getDailyMenu = async (
         req.params.lang,
       );
 
-      console.log(sodexoMenu);
       // convert sodexoMenu.courses to array of Course objects
       if (!sodexoMenu.courses) {
         next(new CustomError('No food today', 404));
@@ -67,25 +67,21 @@ const getDailyMenu = async (
         req.params.lang,
       );
 
-      console.log(compassMenu);
-
-      const meals: Course[] = compassMenu.menuPackages.reduce(
-        (result: any, menuPackage) => {
-          const packageMeals = menuPackage.meals.map((meal) => meal);
+      const courses: Course[] = compassMenu.menuPackages
+        .reduce((result: any, menuP) => {
+          const packageMeals = menuP.meals.map((meal) => meal);
+          // add price
+          packageMeals.forEach((meal: Meal) => {
+            meal.price = menuP.price;
+          });
           return result.concat(packageMeals);
-        },
-        [],
-      );
-
-      console.log(meals);
-
-      menu = {
-        courses: meals.map((meal) => ({
+        }, [])
+        .map((meal: Meal) => ({
           name: meal.name,
           price: meal.price,
           diets: meal.diets,
-        })),
-      };
+        }));
+      menu = { courses };
     }
     res.json(menu);
   } catch (error) {
@@ -107,6 +103,8 @@ const getWeeklyMenu = async (
     }
     let menu: WeeklyMenu;
 
+    const lang = req.params.lang === 'en' ? 'en-GB' : 'fi-FI';
+
     if (restaurant.company === 'Sodexo') {
       const swm = await scrapeSodexoWeeklyMenu(
         restaurant.companyId,
@@ -114,7 +112,7 @@ const getWeeklyMenu = async (
       );
       menu = {
         days: swm.mealdates.map((day) => ({
-          date: day.date,
+          date: getDateFromDayName(day.date, lang),
           courses: Object.values(day.courses).map((course) => ({
             name: req.params.lang === 'en' ? course.title_en : course.title_fi,
             price: course.price,
@@ -129,7 +127,11 @@ const getWeeklyMenu = async (
       );
       menu = {
         days: cwm.menus.map((menuPackage) => ({
-          date: menuPackage.dayOfWeek,
+          date: new Date(menuPackage.date).toLocaleString(lang, {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+          }),
           courses: menuPackage.menuPackages
             .reduce((result: any, menuP) => {
               const packageMeals = menuP.meals.map((meal) => meal);
@@ -181,7 +183,6 @@ const deleteRestaurant = async (
       next(new CustomError('Unauthorized', 401));
       return;
     }
-    console.log(req.params.id);
     const restaurant = await restaurantModel.findByIdAndDelete(req.params.id);
     if (!restaurant) {
       next(new CustomError('Restaurant not found', 404));

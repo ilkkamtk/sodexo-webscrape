@@ -202,14 +202,18 @@ const activateUser = async (
 ) => {
   try {
     const hash = req.params.hash;
-    const activateLink = await activationLinkModel.findOne({ hash: hash });
-    if (!activateLink) {
+    console.log(hash);
+    const activateLink = await activationLinkModel.findOne({
+      hash: hash,
+    });
+    console.log(activateLink);
+    if (activateLink === null) {
       next(new CustomError('Activation link not found', 404));
       return;
     }
 
-    const user = await userModel.findOneAndUpdate(
-      { username: activateLink.user },
+    const user = await userModel.findByIdAndUpdate(
+      activateLink.user,
       { activated: true },
       { new: true },
     );
@@ -218,6 +222,7 @@ const activateUser = async (
         message: 'User activated',
       };
       res.json(message);
+      activationLinkModel.findByIdAndDelete(activateLink._id);
     } else {
       next(new CustomError('User not found', 404));
       return;

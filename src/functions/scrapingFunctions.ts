@@ -122,6 +122,9 @@ const scrapeCompassDailyMenu = async (id: number, lang: string) => {
   const menuResponse = await fetch(
     `https://www.compass-group.fi/menuapi/day-menus?costCenter=${id}&date=${today()}&language=${lang}`,
   );
+  console.log(
+    `https://www.compass-group.fi/menuapi/day-menus?costCenter=${id}&date=${today()}&language=${lang}`,
+  );
   const menuJson = (await menuResponse.json()) as CompassDailyMenu;
   return menuJson;
 };

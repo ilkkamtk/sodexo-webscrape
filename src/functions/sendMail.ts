@@ -3,13 +3,9 @@ import Mail from '../interfaces/Mail';
 
 export default async function sendMail(mail: Mail) {
   // test account from ethereal.email
-  let testAccount = {
-    user: 'luisa61@ethereal.email',
-    pass: 'wcErbXMP2vqaU7VEuz',
-  };
-
+  const testAccount = await nodemailer.createTestAccount();
   // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
     secure: false, // true for 465, false for other ports

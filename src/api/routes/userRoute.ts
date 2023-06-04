@@ -34,9 +34,9 @@ router
   .put(authenticate, validate(updateSchema), userPutCurrent)
   .delete(authenticate, userDeleteCurrent);
 
-router.get('/activate/:hash', activateUser);
+router.route('/activate/:hash').get(activateUser);
 
-router.get('/token', authenticate, checkToken);
+router.route('/token').get(authenticate, checkToken);
 
 router.route('/avatar').post(authenticate, upload.single('avatar'), avatarPost);
 
