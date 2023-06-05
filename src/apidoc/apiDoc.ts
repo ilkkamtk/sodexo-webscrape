@@ -9,7 +9,7 @@
  * @apiParam {String} password User's password.
  *
  * @apiExample {json} Example Request:
- *     POST /users
+ *     POST /auth/login
  *     Content-Type: application/json
  *
  *     {
@@ -21,11 +21,50 @@
  * @apiSuccess {String} token JWT token for authentication.
  * @apiSuccess {Object} data User object containing user information.
  * @apiSuccess {String} data.username User's username.
- * @apiSuccess {String} [data.favouriteRestaurant] User's favorite restaurant ID.
+ * @apiSuccess {String} data.email User's email address.
+ * @apiSuccess {String} data.favouriteRestaurant User's favorite restaurant ID.
  * @apiSuccess {String} data._id User's ID.
  * @apiSuccess {String} data.role User's role ('admin' or 'user').
+ * @apiSuccess {String} data.avatar User's avatar filename.
  *
  * @apiError (Error 200) {String} message Error message.
+ * @apiError (Error 200) {String} message Incorrect username/password.
+ * @apiError (Error 200) {String} message User not activated.
+ * @apiError (Error 500) {String} message Internal server error.
+ */
+
+/**
+ * @api {post} /users Create User
+ * @apiName CreateUser
+ * @apiGroup User
+ *
+ * @apiDescription Creates a new user.
+ *
+ * @apiParam {String} username User's username.
+ * @apiParam {String} password User's password.
+ * @apiParam {String} email User's email address.
+ *
+ * @apiExample {json} Example Request:
+ *     POST /users
+ *     Content-Type: application/json
+ *
+ *     {
+ *       "username": "john.doe",
+ *       "password": "password123",
+ *       "email": "john.doe@example.com",
+ *     }
+ *
+ * @apiSuccess {String} message Success message.
+ * @apiSuccess {Object} data User object containing user information.
+ * @apiSuccess {String} data.username User's username.
+ * @apiSuccess {String} data.email User's email address.
+ * @apiSuccess {String} data.favouriteRestaurant User's favorite restaurant ID.
+ * @apiSuccess {String} data._id User's ID.
+ * @apiSuccess {String} data.role User's role ('user').
+ * @apiSuccess {Boolean} data.activated Indicates if the user is activated.
+ * @apiSuccess {String} activationUrl Activation URL for the user.
+ *
+ * @apiError (Error 400) {String} message Error message.
  */
 
 /**
@@ -36,7 +75,9 @@
  *
  * @apiHeader {String} Authorization User's access token (Bearer Token).
  *
- * @apiParam {Object} body User data to update.
+ * @apiParam {string} [username] User's username.
+ * @apiParam {string} [password] User's password.
+ * @apiParam {string} [email] User's email.
  *
  * @apiSuccess {String} message Success message.
  * @apiSuccess {Object} data Updated user data (excluding password).
@@ -71,7 +112,7 @@
  */
 
 /**
- * @api {get} /users/token Get User Token
+ * @api {get} /users/token Get Current User by Token
  * @apiName CheckToken
  * @apiGroup User
  * @apiDescription Check the validity of the access token and retrieve user information.
@@ -97,25 +138,6 @@
  *
  * @apiSuccess {Boolean} available Indicates whether the username is available (true) or already taken (false).
  *
- * @apiError (400 Bad Request) BadRequest Error occurred while processing the request.
- */
-
-/**
- * @api {get} /users/:id Get User
- * @apiName GetUser
- * @apiGroup User
- * @apiDescription Get user information by ID.
- *
- * @apiParam {String} id User's ID.
- *
- * @apiSuccess {Object} user User object containing user information.
- * @apiSuccess {String} user.username User's username.
- * @apiSuccess {String} [user.favouriteRestaurant] ID of the user's favorite restaurant (optional).
- * @apiSuccess {String} user._id User's ID.
- * @apiSuccess {String} [user.avatar] URL of the user's avatar image (optional).
- * @apiSuccess {String} user.role User's role: 'admin' or 'user'.
- *
- * @apiError (404 Not Found) NotFound User not found.
  * @apiError (400 Bad Request) BadRequest Error occurred while processing the request.
  */
 

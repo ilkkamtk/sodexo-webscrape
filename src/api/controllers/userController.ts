@@ -23,6 +23,7 @@ declare module 'express-serve-static-core' {
 
 const salt = bcrypt.genSaltSync(12);
 
+// not public. maybe later
 const userGet = async (
   req: Request<{ id: string }, {}, {}>,
   res: Response,
@@ -248,7 +249,6 @@ const activateUser = async (
 };
 
 export {
-  userGet,
   userPost,
   userPutCurrent,
   userDeleteCurrent,

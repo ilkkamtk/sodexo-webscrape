@@ -6,7 +6,6 @@ import {
   checkToken,
   checkUserExists,
   userDeleteCurrent,
-  userGet,
   userPost,
   userPutCurrent,
 } from '../controllers/userController';
@@ -41,7 +40,5 @@ router.route('/token').get(authenticate, checkToken);
 router.route('/avatar').post(authenticate, upload.single('avatar'), avatarPost);
 
 router.route('/available/:username').get(checkUserExists);
-
-router.route('/:id').get(userGet);
 
 export default router;
