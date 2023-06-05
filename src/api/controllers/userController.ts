@@ -13,6 +13,8 @@ import activationLinkModel from '../models/activationLinkModel';
 import Mail from '../../interfaces/Mail';
 import sendMail from '../../functions/sendMail';
 import MessageResponse from '../../interfaces/MessageResponse';
+import fs from 'fs';
+
 declare module 'express-serve-static-core' {
   interface ParamsDictionary {
     id: string;
@@ -89,7 +91,7 @@ const userPost = async (
     res.json(response);
   } catch (error) {
     if ((error as Error).message.includes('11000')) {
-      next(new CustomError('Username already exists', 400));
+      next(new CustomError('Username or email already exists', 400));
       return;
     }
     next(new CustomError((error as Error).message, 400));
@@ -172,6 +174,9 @@ const checkToken = (req: Request, res: Response, next: NextFunction) => {
 const avatarPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userFromToken = res.locals.user;
+    // get previous avatar
+    const currentData = await userModel.findById(userFromToken._id);
+    const currentAvatar = currentData?.avatar;
     if (req.file) {
       const avatarFile = req.file.filename;
       const result = await userModel.findByIdAndUpdate(
@@ -180,6 +185,16 @@ const avatarPost = async (req: Request, res: Response, next: NextFunction) => {
         { new: true },
       );
       if (result) {
+        // delete previous avatar
+        if (currentAvatar) {
+          const path = `${__dirname}/../../../uploads/${currentAvatar}`;
+          fs.unlink(path, (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+          });
+        }
         const response: UserResponse = {
           message: 'avatar uploaded',
           data: result,
