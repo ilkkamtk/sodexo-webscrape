@@ -12,7 +12,6 @@ import userModel from '../models/userModel';
 import activationLinkModel from '../models/activationLinkModel';
 import Mail from '../../interfaces/Mail';
 import sendMail from '../../functions/sendMail';
-import MessageResponse from '../../interfaces/MessageResponse';
 import fs from 'fs';
 import { apiURL } from '../../utlis/variables';
 
@@ -233,14 +232,10 @@ const activateUser = async (
       { new: true },
     );
     if (user) {
-      const message: MessageResponse = {
-        message: 'User activated',
-      };
-      res.json(message);
       activationLinkModel.findByIdAndDelete(activateLink._id);
+      res.send('<h2>Your account has been activated.</h2>');
     } else {
-      next(new CustomError('User not found', 404));
-      return;
+      res.send('<h2>Something went wrong.</h2>');
     }
   } catch (error) {
     next(new CustomError((error as Error).message, 400));
