@@ -39,6 +39,7 @@ const login = async (
       _id: user._id as Types.ObjectId,
       role: user.role,
       activated: user.activated,
+      avatar: user.avatar,
     };
 
     const token = jwt.sign(authUser, process.env.JWT_SECRET as string);
