@@ -120,6 +120,7 @@
  * @apiHeader {String} Authorization User's access token (Bearer Token).
  *
  * @apiSuccess {String} username User's username.
+ * @apiSuccess {String} email User's email address.
  * @apiSuccess {ObjectId} favouriteRestaurant User's favorite restaurant ID.
  * @apiSuccess {ObjectId} _id User's ID.
  * @apiSuccess {String} avatar User's avatar URL.
@@ -149,6 +150,7 @@
  * @apiDescription Retrieves a list of restaurants.
  *
  * @apiSuccess {Object[]} restaurants List of restaurants.
+ * @apiSuccess {String} restaurants._id Restaurant ID.
  * @apiSuccess {Number} restaurants.companyId Company's internal ID of the restaurant. Don't use as Restaurant ID.
  * @apiSuccess {String} restaurants.name Name of the restaurant.
  * @apiSuccess {String} restaurants.address Address of the restaurant.
@@ -173,6 +175,7 @@
  *
  * @apiParam {String} id Restaurant ID.
  *
+ * @apiSuccess {String} _id Restaurant ID.
  * @apiSuccess {Number} companyId Company's internal ID of the restaurant. Don't use as Restaurant ID.
  * @apiSuccess {String} name Name of the restaurant.
  * @apiSuccess {String} address Address of the restaurant.
