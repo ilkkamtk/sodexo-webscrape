@@ -14,6 +14,7 @@ import Mail from '../../interfaces/Mail';
 import sendMail from '../../functions/sendMail';
 import MessageResponse from '../../interfaces/MessageResponse';
 import fs from 'fs';
+import { apiURL } from '../../utlis/variables';
 
 declare module 'express-serve-static-core' {
   interface ParamsDictionary {
@@ -69,9 +70,7 @@ const userPost = async (
       from: 'noreply@studentrestaurants.fi',
       to: newUser.email,
       subject: 'Account activation',
-      html: `Click the link to activate your account: <a href="${
-        user.UIUrl + activateObject.hash
-      }">Activate</a>`,
+      html: `Click the link to activate your account: <a href="${apiURL}/users/activate/${activateObject.hash}">Activate</a>`,
     };
     // send email
     const link = await sendMail(mail);
