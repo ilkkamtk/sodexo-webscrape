@@ -21,7 +21,7 @@ const errorHandler = (
   next: NextFunction,
 ) => {
   // console.log('errorhanler', err);
-  const statusCode = err.status !== 200 ? err.status || 500 : 500;
+  const statusCode = err.status === 200 ? 200 : (err.status || 500);
   res.status(statusCode).json({
     message: err.message,
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
