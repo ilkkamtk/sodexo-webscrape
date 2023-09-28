@@ -10,7 +10,7 @@ const userSchema = new Schema<User>({
   favouriteRestaurant: { type: Schema.Types.ObjectId, ref: 'Restaurant' },
   avatar: { type: String },
   role: { type: String, required: true, enum: ['admin', 'user'] },
-  activated: { type: Boolean, default: false },
+  activated: { type: Boolean, default: true },
 });
 
 export default mongoose.model<User>('User', userSchema);
