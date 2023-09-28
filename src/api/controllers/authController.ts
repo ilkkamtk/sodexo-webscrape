@@ -18,17 +18,17 @@ const login = async (
     const user = (await userModel.findOne({ username })) as User;
     console.log(user);
     if (!user) {
-      next(new CustomError('Incorrect username/password', 200));
+      next(new CustomError('Incorrect username/password', 401));
       return;
     }
 
     if (!bcrypt.compareSync(password, user.password)) {
-      next(new CustomError('Incorrect username/password', 200));
+      next(new CustomError('Incorrect username/password', 401));
       return;
     }
 
     if (!user.activated) {
-      next(new CustomError('User not activated', 200));
+      next(new CustomError('User not activated', 401));
       return;
     }
 
