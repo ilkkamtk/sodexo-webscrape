@@ -78,6 +78,9 @@
  * @apiParam {string} [username] User's username.
  * @apiParam {string} [password] User's password.
  * @apiParam {string} [email] User's email.
+ * @apiParam {ObjectId} [favouriteRestaurant] User's favorite restaurant ID.
+ * @apiParam {string} [avatar] User's avatar filename.
+ *
  *
  * @apiSuccess {String} message Success message.
  * @apiSuccess {Object} data Updated user data (excluding password).
