@@ -10,7 +10,7 @@
     "postbuild": "npm run apidoc",
     "lint": "eslint --fix src test",
     "test": "jest",
-    "apidoc": "apidoc -c apidoc.json -o public/"
+    "apidoc": "apidoc -c apidoc.json -o public/ -t apidoc-template"
   },
   "keywords": [],
   "author": "Ile <ilkka.kylmaniemi@metropolia.fi> (https://rb.gy/l044u)",
