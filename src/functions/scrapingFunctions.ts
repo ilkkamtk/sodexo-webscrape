@@ -75,19 +75,17 @@ const scrapeSodexoRestaurants = async () => {
   return restaurants.filter((restaurant) => restaurant !== undefined);
 };
 
-const scrapeSodexoDailyMenu = async (id: number, lang: string) => {
-  lang = lang !== 'en' ? '' : 'en/';
+const scrapeSodexoDailyMenu = async (id: number) => {
   const menuResponse = await fetch(
-    `https://www.sodexo.fi/${lang}ruokalistat/output/daily_json/${id}/${today()}`,
+    `https://www.sodexo.fi/ruokalistat/output/daily_json/${id}/${today()}`,
   );
   const menuJson = (await menuResponse.json()) as SodexoDailyMenu;
   return menuJson;
 };
 
-const scrapeSodexoWeeklyMenu = async (id: number, lang: string) => {
-  lang = lang !== 'en' ? '' : 'en/';
+const scrapeSodexoWeeklyMenu = async (id: number) => {
   const menuResponse = await fetch(
-    `https://www.sodexo.fi/${lang}ruokalistat/output/weekly_json/${id}`,
+    `https://www.sodexo.fi/ruokalistat/output/weekly_json/${id}`,
   );
   const menuJson = (await menuResponse.json()) as SodexoWeeklyMenu;
   return menuJson;

@@ -42,10 +42,7 @@ const getDailyMenu = async (
     let menu: DailyMenu;
 
     if (restaurant.company === 'Sodexo') {
-      const sodexoMenu = await scrapeSodexoDailyMenu(
-        restaurant.companyId,
-        req.params.lang,
-      );
+      const sodexoMenu = await scrapeSodexoDailyMenu(restaurant.companyId);
 
       // convert sodexoMenu.courses to array of Course objects
       if (!sodexoMenu.courses) {
@@ -56,7 +53,12 @@ const getDailyMenu = async (
 
       menu = {
         courses: sodexoCourses.map((course) => ({
-          name: req.params.lang === 'en' ? course.title_en : course.title_fi,
+          name:
+            course.title_en.length > 0
+              ? req.params.lang === 'en'
+                ? course.title_en
+                : course.title_fi
+              : course.title_fi,
           price: course.price,
           diets: course.dietcodes,
         })),
@@ -106,15 +108,17 @@ const getWeeklyMenu = async (
     const lang = req.params.lang === 'en' ? 'en-GB' : 'fi-FI';
 
     if (restaurant.company === 'Sodexo') {
-      const swm = await scrapeSodexoWeeklyMenu(
-        restaurant.companyId,
-        req.params.lang,
-      );
+      const swm = await scrapeSodexoWeeklyMenu(restaurant.companyId);
       menu = {
         days: swm.mealdates.map((day) => ({
           date: getDateFromDayName(day.date, lang),
           courses: Object.values(day.courses).map((course) => ({
-            name: req.params.lang === 'en' ? course.title_en : course.title_fi,
+            name:
+              course.title_en.length > 0
+                ? req.params.lang === 'en'
+                  ? course.title_en
+                  : course.title_fi
+                : course.title_fi,
             price: course.price,
             diets: course.dietcodes,
           })),
