@@ -121,6 +121,9 @@ const userPutCurrent = async (
   try {
     const userFromToken = res.locals.user;
     const user = req.body;
+    if(user.password){
+      user.password = bcrypt.hashSync(user.password, salt);
+    }
     const result = await userModel
       .findByIdAndUpdate(userFromToken._id, user, {
         new: true,
